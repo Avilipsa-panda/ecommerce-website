@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Checkout</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="checkout-page">
+
+<h2>Checkout</h2>
+
+<form onsubmit="placeOrder(event)">
+
+<!-- Shipping Details -->
+
+<div class="checkout-box">
+
+<h3>Shipping Details</h3>
+
+<input type="text" placeholder="Full Name" required>
+<input type="text" placeholder="Address" required>
+<input type="text" placeholder="Phone Number" required>
+
+</div>
+
+
+<!-- Payment Details -->
+
+<div class="checkout-box">
+
+<h3>Payment Details</h3>
+
+<div class="payment-mode">
+
+<label>
+<input type="radio" name="payment" value="cod" checked>
+Cash on Delivery
+</label>
+
+<label>
+<input type="radio" name="payment" value="online">
+Online Payment
+</label>
+
+</div>
+
+<input type="text" placeholder="Card Number">
+<input type="text" placeholder="Card Holder Name">
+
+<div class="card-row">
+<input type="text" placeholder="MM/YY">
+<input type="text" placeholder="CVV">
+</div>
+
+</div>
+
+
+<!-- Button -->
+
+<button id="paymentBtn" class="pay-btn">Place Order</button>
+
+</form>
+
+</div>
+
+
+<script>
+
+/* Payment button text change */
+
+const paymentOptions = document.querySelectorAll('input[name="payment"]');
+const paymentBtn = document.getElementById("paymentBtn");
+
+paymentOptions.forEach(option => {
+
+option.addEventListener("change", () => {
+
+if(option.value === "cod" && option.checked){
+paymentBtn.textContent = "Place Order";
+}
+
+if(option.value === "online" && option.checked){
+paymentBtn.textContent = "Pay Now";
+}
+
+});
+
+});
+
+function placeOrder(e){
+
+e.preventDefault();
+
+/* Get cart items */
+
+const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+if(cart.length === 0){
+alert("Cart is empty");
+return;
+}
+
+/* Calculate total */
+
+let total = 0;
+
+cart.forEach(item=>{
+total += item.price * item.quantity;
+});
+
+/* Get existing orders */
+
+const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+/* Create new order */
+
+const newOrder = {
+id: "ORD" + Date.now(),
+items: cart,
+total: total,
+date: new Date().toLocaleString(),
+status: "Placed"
+};
+
+/* Save order */
+
+orders.push(newOrder);
+
+localStorage.setItem("orders", JSON.stringify(orders));
+
+/* Clear cart */
+
+localStorage.removeItem("cart");
+
+/* Redirect to success page */
+
+window.location.href = "success.html";
+
+}
+
+</script>
+
+</body>
+</html>
